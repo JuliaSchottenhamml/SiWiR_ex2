@@ -129,6 +129,9 @@ local.properties
 *.vrb
 *.xdy
 *.tdo
+*.bcf
+*.run.xml
+*.tcp
 
 ### NetBeans ###
 nbproject/private/
