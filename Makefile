@@ -23,7 +23,12 @@ all: rbgs
  
 rbgs: rbgs.cpp
 	$(CXX) $(FLAGS) $(INCPATH) -o rbgs rbgs.cpp $(LIBPATH) $(LIBS)
-			
+
+documentation: report/setup.tex report/main.tex
+	cd report && pdflatex main.tex
+	cd report && pdflatex main.tex
+	cd report && pdflatex main.tex
+
 clean:
 	rm -f *.o rgbs
 
