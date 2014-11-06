@@ -1,0 +1,38 @@
+ASSIGNMENT:
+SiWiR_ex2
+Second assignment of SiWiR course!
+
+
+GROUP:
+Eibl, Sebastian
+Schottenhamml, Julia
+Sen, Karnajit
+
+
+REPOSITORY URL:
+git clone git@github.com:JuliaSchottenhamml/SiWiR_ex2.git
+
+
+DIRECTORY STRUCTURE:
+assignment/
+Contains all given files related to this exercise.
+
+data/
+Contains all data files our program generates.
+
+img/
+Contains all pictures and plots we create.
+
+report/
+Contains the LaTeX project for the report
+
+
+GIT:
+You are free to create as many branches as you like. Please follow the naming convention for your branches to avoid collisions. "initials/name" e.g. "js/plot" for Julia's plotting branch. You can base your branches on the master branch which is our only common branch. master always contains a working and stable version. Therefore don't push or merge to master unless you are 100% sure what you do!!! Also DON'T rewrite the history of master branch. In your own branches you are free to do whatever you want. Even though I recommend the following:
+-only commit working versions (one reason for example is git bisect)
+-don't rewrite your history (might break others work based on yours)
+-don't push with force (most of the timer there is a reason why...)
+
+MAKE:
+documentation
+Builds the documentation running pdflatex several times.
