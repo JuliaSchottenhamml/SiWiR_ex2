@@ -24,6 +24,10 @@ all: rbgs
 rbgs: rbgs.cpp
 	$(CXX) $(FLAGS) $(INCPATH) -o rbgs rbgs.cpp $(LIBPATH) $(LIBS)
 
+run: rbgs
+	./rbgs ${ARGS}
+	gnuplot gnuplotSolution.plt
+
 documentation: report/setup.tex report/main.tex
 	cd report && pdflatex main.tex
 	cd report && pdflatex main.tex

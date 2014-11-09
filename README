@@ -36,3 +36,7 @@ You are free to create as many branches as you like. Please follow the naming co
 MAKE:
 documentation
 Builds the documentation running pdflatex several times.
+
+run
+Runs the current rbgs.cpp followed by the gnuplot script to visualize the solution.
+Commando prompt call: make ARGS="nx ny c" run
