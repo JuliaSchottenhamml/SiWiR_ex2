@@ -4,6 +4,7 @@
 #include	<fstream>
 #include	<cmath>
 #include	<immintrin.h>
+#include	<omp.h>
 
 #ifdef USE_LIKWID
 extern "C" {
@@ -43,8 +44,15 @@ int main(int argc, char **argv) {
 	nx = StringTo<int>(argv[1]);
 	ny = StringTo<int>(argv[2]);
 	c = StringTo<int>(argv[3]);
-
 	
+	std::cout << "nx," << nx << std::endl;
+	std::cout << "ny," << ny << std::endl;
+	std::cout << "c," << c <<std::endl;
+	if (getenv("GOMP_CPU_AFFINITY")){
+		std::cout << "GOMP_CPU_AFFINITY," << getenv("GOMP_CPU_AFFINITY") << std::endl;
+	}
+	std::cout << "numThreads," << omp_get_num_threads() << std::endl;
+
 	///******************************************************
 	///********************** CALCULATION *******************
 	///******************************************************
@@ -57,9 +65,8 @@ int main(int argc, char **argv) {
 
 	siwir::Timer	timer;
 
-	std::cout << nx << "\t" << ny << "\t" << c <<std::endl;
 	time = timer.elapsed();
-	std::cout << time << std::endl;
+	std::cout << "time," << time << std::endl;
 
 #ifdef USE_LIKWID
 	likwid_markerStopRegion("dummy");
