@@ -25,6 +25,7 @@ rbgs: rbgs.cpp
 	$(CXX) $(FLAGS) $(INCPATH) -o rbgs rbgs.cpp $(LIBPATH) $(LIBS)
 
 run: rbgs
+	$(CXX) $(FLAGS) $(INCPATH) -o rbgs rbgs.cpp $(LIBPATH) $(LIBS)
 	./rbgs ${ARGS}
 	gnuplot gnuplotSolution.plt
 

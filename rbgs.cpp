@@ -12,6 +12,7 @@ extern "C" {
 #endif
 
 #include	"Timer.h"
+#include    "matrix.hpp"
 
 /**
   Converts a string to an arbitrary type. >> operator must be defined for the target type.
@@ -37,12 +38,26 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	int 	nx = 0;
+    int nx = 0;
 	int	ny = 0;
 	int	c = 0;
 	nx = StringTo<int>(argv[1]);
 	ny = StringTo<int>(argv[2]);
 	c = StringTo<int>(argv[3]);
+
+    double *red = new double(((nx+1)*(ny+1))/2);
+    double *black = new double(((nx+1)*(ny+1))/2);
+
+    for(int i = 0; i < ((nx+1)*(ny+1))/2; ++i)
+    {
+        red[i] = i;
+        black[i] = 1.5*i;
+    }
+
+
+    Matrix u (red, black, nx, ny);
+
+    u.print("data/solution.txt");
 
 	
 	///******************************************************
@@ -58,6 +73,7 @@ int main(int argc, char **argv) {
 	siwir::Timer	timer;
 
 	std::cout << nx << "\t" << ny << "\t" << c <<std::endl;
+    std::cout << u(2,1) << std::endl;
 	time = timer.elapsed();
 	std::cout << time << std::endl;
 
@@ -69,5 +85,8 @@ int main(int argc, char **argv) {
 	///******************************************************
 	///********************** OUTPUT ************************
 	///******************************************************
+
+    free(red);
+    free(black);
 
 	};
