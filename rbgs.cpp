@@ -154,6 +154,28 @@ int main(int argc, char **argv) {
 	///********************** OUTPUT ************************
 	///******************************************************
 	
+	double	r = 0;
+	double	r2 = 0;
+	
+	for (int y = 1; y < ny; ++y){
+		for (int x = ((y&0x1)^0x1)+1; x < nx; x+=2){
+			r = (fRed(x,y) + invHx2 * (uBlack(x-1,y) + uBlack(x+1,y)) + invHy2 * (uBlack(x, y-1) + uBlack(x,y+1)) ) - uRed(x,y)/preF;
+			r2 += r*r;
+		}
+	}
+	
+	for (int y = 1; y < ny; ++y){
+		for (int x = (y&0x1)+1; x < nx; x+=2){
+			r = (fBlack(x,y) + invHx2 * (uRed(x-1,y) + uRed(x+1,y)) + invHy2 * (uRed(x, y-1) + uRed(x,y+1)) ) - uBlack(x,y)/preF;
+			r2 += r*r;
+		}
+	}
+	
+	r2 = r2 / (nx-1) / (ny-1);
+	r2 = sqrt(r2);
+	
+	std::cout << "residuum," << r2 << std::endl;
+	
 	std::ofstream	fOut("data/solution.txt");
 	for (int y = 0; y < ny+1; ++y){
 		for (int x = 0; x < nx+1; ++x){
