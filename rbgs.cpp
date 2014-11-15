@@ -88,13 +88,15 @@ int main(int argc, char **argv) {
 	
 	Grid	fRed( (nx+2)/2, (ny+1) );
 	Grid	fBlack( (nx+2)/2, (ny+1) );
-
+	
+	#pragma omp parallel for
 	for (int y = 0; y < ny+1; ++y){
 		for (int x = (y&0x1); x < nx+2; x+=2){
 			fRed(x,y) = f( x*hx, y*hy );
 		}
 	}
 	
+	#pragma omp parallel for
 	for (int y = 0; y < ny+1; ++y){
 		for (int x = ((y&0x1)^0x1); x < nx+2; x+=2){
 			fBlack(x,y) = f( x*hx, y*hy );
@@ -106,6 +108,7 @@ int main(int argc, char **argv) {
 	Grid	uRed( (nx+2)/2, (ny+1) );
 	Grid	uBlack( (nx+2)/2, (ny+1) );
 	
+	#pragma omp parallel for
 	for (int y = 0; y < ny+1; ++y){
 		for (int x = (y&0x1); x < nx+2; x+=2){
 			if (y == ny){
@@ -116,6 +119,7 @@ int main(int argc, char **argv) {
 		}
 	}
 	
+	#pragma omp parallel for
 	for (int y = 0; y < ny+1; ++y){
 		for (int x = ((y&0x1)^0x1); x < nx+2; x+=2){
 			if (y == ny){
@@ -129,12 +133,14 @@ int main(int argc, char **argv) {
 	//calc u
 	
 	for (int runs = 0; runs<c; ++runs){
+		#pragma omp parallel for
 		for (int y = 1; y < ny; ++y){
 			for (int x = ((y&0x1)^0x1)+1; x < nx; x+=2){
 				uRed(x,y) = preF * (fRed(x,y) + invHx2 * (uBlack(x-1,y) + uBlack(x+1,y)) + invHy2 * (uBlack(x, y-1) + uBlack(x,y+1)) );
 			}
 		}
 		
+		#pragma omp parallel for
 		for (int y = 1; y < ny; ++y){
 			for (int x = (y&0x1)+1; x < nx; x+=2){
 				uBlack(x,y) = preF * (fBlack(x,y) + invHx2 * (uRed(x-1,y) + uRed(x+1,y)) + invHy2 * (uRed(x, y-1) + uRed(x,y+1)) );
