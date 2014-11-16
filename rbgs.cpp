@@ -59,10 +59,13 @@ int main(int argc, char **argv) {
 	std::cout << "nx," << nx << std::endl;
 	std::cout << "ny," << ny << std::endl;
 	std::cout << "c," << c <<std::endl;
+	if (getenv("OMP_NUM_THREADS")){
+		std::cout << "OMP_NUM_THREADS," << getenv("OMP_NUM_THREADS") << std::endl;
+	}
 	if (getenv("GOMP_CPU_AFFINITY")){
 		std::cout << "GOMP_CPU_AFFINITY," << getenv("GOMP_CPU_AFFINITY") << std::endl;
 	}
-	std::cout << "numThreads," << omp_get_num_threads() << std::endl;
+	//std::cout << "numThreads," << omp_get_num_threads() << std::endl;
 
 	///******************************************************
 	///********************** CALCULATION *******************
@@ -132,12 +135,54 @@ int main(int argc, char **argv) {
 	
 	//calc u
 	
+	__m128d	PreF = _mm_set_pd(preF, preF);
+	__m128d	InvHx2 = _mm_set_pd(invHx2, invHx2);
+	__m128d	InvHy2 = _mm_set_pd(invHy2, invHy2);
+	
+	//std::cout << 0 << "\t" << 0 << "\t" << &uRed(0,0) << std::endl;
+	//std::cout << 2 << "\t" << 0 << "\t" << &uRed(2,0) << std::endl;
+	//std::cout << 0 << "\t" << 1 << "\t" << &uRed(0,1) << std::endl;
+	
 	for (int runs = 0; runs<c; ++runs){
 		#pragma omp parallel for
-		for (int y = 1; y < ny; ++y){
-			for (int x = ((y&0x1)^0x1)+1; x < nx; x+=2){
-				uRed(x,y) = preF * (fRed(x,y) + invHx2 * (uBlack(x-1,y) + uBlack(x+1,y)) + invHy2 * (uBlack(x, y-1) + uBlack(x,y+1)) );
+		for (int y = 1; y < ny; y+=2){
+			for (int x = 1; x < nx; x+=4){
+				//uRed(x,y) = preF * (fRed(x,y) + invHx2 * (uBlack(x-1,y) + uBlack(x+1,y)) + invHy2 * (uBlack(x, y-1) + uBlack(x,y+1)) );
+				//std::cout << "A" << std::endl;
+				__m128d*	FRed = (__m128d*) &fRed(x,y);
+				//std::cout << "B" << std::endl;
+				__m128d*	north = (__m128d*) &uBlack(x,y+1);
+				//std::cout << "C" << std::endl;
+				__m128d*	west = (__m128d*) (&uBlack(x-1,y));
+				//std::cout << "D" << std::endl;
+				__m128d*	south = (__m128d*) &uBlack(x,y-1);
+				//std::cout << "E" << std::endl;
+				__m128d	east = _mm_loadu_pd(&uBlack(x+1,y));
+				//std::cout << x << "\t" << y << "\t" << &uRed(x,y) << "\t" << west << "\t" << east << std::endl;
+				_mm_stream_pd(&uRed(x,y), PreF * ((*FRed) + InvHx2 * ((*west) + (east)) + InvHy2 * ((*north) + (*south))) );
+				//_mm_stream_pd*/
 			}
+			uRed(0, y) = 0;
+			uRed(nx, y) = 0;
+			
+			for (int x = 0; x < nx; x+=4){
+				//uRed(x,y) = preF * (fRed(x,y) + invHx2 * (uBlack(x-1,y) + uBlack(x+1,y)) + invHy2 * (uBlack(x, y-1) + uBlack(x,y+1)) );
+				//std::cout << "A" << std::endl;
+				__m128d*	FRed = (__m128d*) &fRed(x,y+1);
+				//std::cout << "B" << std::endl;
+				__m128d*	north = (__m128d*) &uBlack(x,y+2);
+				//std::cout << "C" << std::endl;
+				__m128d	west = _mm_loadu_pd (&uBlack(x-1,y+1));
+				//std::cout << "D" << std::endl;
+				__m128d*	south = (__m128d*) &uBlack(x,y);
+				//std::cout << "E" << std::endl;
+				__m128d*	east = (__m128d*) (&uBlack(x+1,y+1));
+				//std::cout << x << "\t" << y << "\t" << &uRed(x,y) << "\t" << west << "\t" << east << std::endl;
+				_mm_stream_pd(&uRed(x,y+1), PreF * ((*FRed) + InvHx2 * ((west) + (*east)) + InvHy2 * ((*north) + (*south))) );
+				//_mm_stream_pd*/
+			}
+			uRed(0, y+1) = 0;
+			uRed(nx, y+1) = 0;
 		}
 		
 		#pragma omp parallel for
@@ -145,6 +190,7 @@ int main(int argc, char **argv) {
 			for (int x = (y&0x1)+1; x < nx; x+=2){
 				uBlack(x,y) = preF * (fBlack(x,y) + invHx2 * (uRed(x-1,y) + uRed(x+1,y)) + invHy2 * (uRed(x, y-1) + uRed(x,y+1)) );
 			}
+			uBlack(nx, y) = 0;
 		}
 	}
 

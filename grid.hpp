@@ -2,8 +2,10 @@
 #define	GRID_HPP_INCLUDED
 
 #include	<stdlib.h>
+#include	<malloc.h>
+#include	<iostream>
 
-static const int ALIGNMENT = 64;
+static const int ALIGNMENT = 0x100;
 
 class	Grid{
 public:
@@ -15,9 +17,10 @@ public:
 	int	ld;
 
 	///basic constructor
-	Grid(const int _sizeX, const int _sizeY) : sizeX(_sizeX), sizeY(_sizeY), ld(_sizeX+10){
-		//data = (double*) aligned_alloc(ALIGNMENT, sizeof(double) * ld * sizeY);
-		data = (double*) malloc(sizeof(double) * ld * sizeY);
+	Grid(const int _sizeX, const int _sizeY) : sizeX(_sizeX), sizeY(_sizeY), ld((_sizeX+10)&0xFFFFFFFE){
+		data = (double*) memalign(ALIGNMENT, sizeof(double) * ld * sizeY);
+		std::cout << ld << "\t" << data << std::endl;
+		//data = (double*) malloc(sizeof(double) * ld * sizeY);
 	}
 	~Grid(){
 		free(data);
