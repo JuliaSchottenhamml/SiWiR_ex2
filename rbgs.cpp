@@ -111,6 +111,7 @@ int main(int argc, char **argv) {
 	Grid	uRed( (nx+2)/2, (ny+1) );
 	Grid	uBlack( (nx+2)/2, (ny+1) );
 	
+    /*
 	#pragma omp parallel for
 	for (int y = 0; y < ny+1; ++y){
 		for (int x = (y&0x1); x < nx+2; x+=2){
@@ -120,7 +121,8 @@ int main(int argc, char **argv) {
 				uRed(x,y) = 0;
 			}
 		}
-	}
+    }#
+    */
 	
 	#pragma omp parallel for
 	for (int y = 0; y < ny+1; ++y){
@@ -132,7 +134,63 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
-	
+
+
+    #pragma omp parallel for
+    for (int y = 1; y < ny; y+=2){
+        for (int x = 1; x < nx; x+=4){
+            if(y == ny)
+            {
+                if (y == ny){
+                    uRed(x,y) = border( x*hx, y*hy);
+                } else {
+                    uRed(x,y) = 0;
+                }
+            }
+            /*
+            //uRed(x,y) = preF * (fRed(x,y) + invHx2 * (uBlack(x-1,y) + uBlack(x+1,y)) + invHy2 * (uBlack(x, y-1) + uBlack(x,y+1)) );
+            //std::cout << "A" << std::endl;
+            __m128d*	FRed = (__m128d*) &fRed(x,y);
+            //std::cout << "B" << std::endl;
+            __m128d*	north = (__m128d*) &uBlack(x,y+1);
+            //std::cout << "C" << std::endl;
+            __m128d*	west = (__m128d*) (&uBlack(x-1,y));
+            //std::cout << "D" << std::endl;
+            __m128d*	south = (__m128d*) &uBlack(x,y-1);
+            //std::cout << "E" << std::endl;
+            __m128d	east = _mm_loadu_pd(&uBlack(x+1,y));
+            //std::cout << x << "\t" << y << "\t" << &uRed(x,y) << "\t" << west << "\t" << east << std::endl;
+            _mm_stream_pd(&uRed(x,y), PreF * ((*FRed) + InvHx2 * ((*west) + (east)) + InvHy2 * ((*north) + (*south))) );
+            //_mm_stream_pd*/
+        }
+
+        for (int x = 0; x < nx; x+=4){
+            if(y == ny)
+            {
+                if (y == ny){
+                    uRed(x,y) = border( x*hx, y*hy);
+                } else {
+                    uRed(x,y) = 0;
+                }
+            }
+            /*
+            //uRed(x,y) = preF * (fRed(x,y) + invHx2 * (uBlack(x-1,y) + uBlack(x+1,y)) + invHy2 * (uBlack(x, y-1) + uBlack(x,y+1)) );
+            //std::cout << "A" << std::endl;
+            __m128d*	FRed = (__m128d*) &fRed(x,y+1);
+            //std::cout << "B" << std::endl;
+            __m128d*	north = (__m128d*) &uBlack(x,y+2);
+            //std::cout << "C" << std::endl;
+            __m128d	west = _mm_loadu_pd (&uBlack(x-1,y+1));
+            //std::cout << "D" << std::endl;
+            __m128d*	south = (__m128d*) &uBlack(x,y);
+            //std::cout << "E" << std::endl;
+            __m128d*	east = (__m128d*) (&uBlack(x+1,y+1));
+            //std::cout << x << "\t" << y << "\t" << &uRed(x,y) << "\t" << west << "\t" << east << std::endl;
+            _mm_stream_pd(&uRed(x,y+1), PreF * ((*FRed) + InvHx2 * ((west) + (*east)) + InvHy2 * ((*north) + (*south))) );
+            //_mm_stream_pd*/
+        }
+    }
+
 	//calc u
 	
 	__m128d	PreF = _mm_set_pd(preF, preF);
