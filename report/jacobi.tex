@@ -1,1 +1,11 @@
 \section{Jacobi}
+
+Since A is strictly dominant the spectral radius of the iteration matrix C ($\rho(C)$) can be computed by the following formula:\\
+\begin{equation}
+	\rho(C) \leq \max\limits_{i}\frac{1}{|a_{jj}|}\sum\limits_{i \neq j}|a_{ij}|
+\end{equation}
+As stated in the task above the highest magnitude of non-diagonal elements in a row is reached by $\frac{2}{h_{x}^{2}} + \frac{2}{h_{y}^{2}}$. This leads to a spectral radius of the iteration matrix of:
+\begin{equation}
+	\rho(C) \leq \frac{\frac{2}{h_{x}^{2}} + \frac{2}{h_{y}^{2}}}{\frac{2}{h_{x}^{2}} + \frac{2}{h_{y}^{2}} + k^{2}} < 1
+\end{equation}
+Consequently the Jacobi problem converges for this problem.

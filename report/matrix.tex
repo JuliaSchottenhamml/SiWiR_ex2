@@ -12,6 +12,8 @@ $A =
  \end{pmatrix}
 \right. \text{$, A \in \mathbb{R}^{N_{x}N_{y} \times N_{x}N_{y}}$}$
 
+\hfill \\
+\hfill \\
 with \newline
 \newline
 
@@ -27,6 +29,8 @@ $D =
 \end{pmatrix}
 \right. \text{$, D \in \mathbb{R}^{N_{x} \times N_{x}}$, $\alpha = \frac{2}{h_{x}^{2}} + \frac{2}{h_{y}^{2}} + k^{2}$, $\beta = - \frac{1}{h_{x}^{2}}$}$
 
+\hfill \\
+\hfill \\
 and\newline
 \newline
 
@@ -41,3 +45,7 @@ $E =
   	0 		& \cdots 	& 0 		& 0 		& 0		& 0 			& \gamma
 \end{pmatrix}
 \right. \text{$, E \in \mathbb{R}^{N_{x} \times N_{x}}$, $\gamma = - \frac{1}{h_{x}^{2}}$}$
+
+\hfill \\
+\hfill \\
+A matrix is strictly diagonal if the magnitude of the diagonal entry in a row is larger than or equal to the sum of the magnitudes of all the other (non-diagonal) entries in that row. Here in each row are always one $\alpha$ (on the diagonal), one or two $\beta$ and one or two $\gamma$. The highest sum of the magnitude of non-diagonal entries in a row is hence reached by two $\beta$ and two $\gamma$, which is $-\frac{2}{h_{x}^{2}} -\frac{2}{h_{y}^{2}}$ (with a magnitude of $\frac{2}{h_{x}^{2}} + \frac{2}{h_{y}^{2}}$)  and is therefore still smaller than the diagonal element $\alpha$ with a magnitude of $\frac{2}{h_{x}^{2}} + \frac{2}{h_{y}^{2}} + k^{2}$. Consequently A is strictly diagonal.
