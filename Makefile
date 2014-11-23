@@ -1,7 +1,7 @@
 SHELL        = /bin/bash
 CXX          = g++
  
-FLAGS        = -march=native -mtune=native -std=c++0x -Wall -Wextra -Wshadow -Werror -fopenmp -O3 -DNDEBUG
+FLAGS        = -march=native -mtune=native -std=c++0x -Wall -Wextra -Wshadow -fopenmp -O3 -fopt-info-optall -DNDEBUG
 DEBUGFLAGS   = 
 RELEASEFLAGS =
 INCPATH      = 
