@@ -132,18 +132,39 @@ int main(int argc, char **argv) {
 	int	width = ( nx / 2 ) + 1;
 	//std::cout << "width," << width << std::endl;
 	int even = ((nx + 1)&0x1);
+	
+	__m128d	PreF = _mm_set_pd(preF, preF);
+	__m128d	InvHx2 = _mm_set_pd(invHx2, invHx2);
+	__m128d	InvHy2 = _mm_set_pd(invHy2, invHy2);
 
 	for (int runs = 0; runs < c; ++runs) {
 		for (int y = 1; y < ny; ++y) {
-			for (int x = 1; x < width; ++x) {
-				uRed(x, y) = preF * ( fRed(x, y) + invHx2 * ( uBlack(x - ( y & 0x1 ), y) + uBlack(x + 1 - ( y & 0x1 ), y) ) + invHy2 * ( uBlack(x, y - 1) + uBlack(x, y + 1) ) );
+			int index = 1 - ( y & 0x1 );
+			for (int x = 1; x < width; x+=2) {
+				__m128d*	FRed 	= (__m128d*) &fRed(x,y);
+				__m128d*	north 	= (__m128d*) &uBlack(x,y+1);
+				__m128d		west 	= _mm_loadu_pd(&uBlack(index,y));
+				index++;
+				__m128d*	south 	= (__m128d*) &uBlack(x,y-1);
+				__m128d		east 	= _mm_loadu_pd(&uBlack(index,y));
+				index++;
+				
+				_mm_store_pd(&uRed(x,y), PreF * ( (*FRed) + InvHx2 * ( west + east ) + InvHy2 * ( (*north) + (*south) ) ) );
 			}
 			uRed( width - (even&((y+1)&0x1)), y) = 0;
 		}
 
 		for (int y = 1; y < ny; ++y) {
-			for (int x = 1; x < width; ++x) {
-				uBlack(x, y) = preF * ( fBlack(x, y) + invHx2 * ( uRed(x - 1 + ( y & 0x1 ), y) + uRed(x + ( y & 0x1 ), y) ) + invHy2 * ( uRed(x, y - 1) + uRed(x, y + 1) ) );
+			int index = ( y & 0x1 );
+			for (int x = 1; x < width; x+=2) {
+				__m128d*	FBlack 	= (__m128d*) &fBlack(x,y);
+				__m128d*	north 	= (__m128d*) &uRed(x,y+1);
+				__m128d		west 	= _mm_loadu_pd(&uRed(index,y));
+				index++;
+				__m128d*	south 	= (__m128d*) &uRed(x,y-1);
+				__m128d		east 	= _mm_loadu_pd(&uRed(index,y));
+				index++;
+				_mm_store_pd(&uBlack(x, y), PreF * ( (*FBlack) + InvHx2 * ( west + east ) + InvHy2 * ( (*north) + (*south) ) ) );
 			}
 			uBlack( width - (even&((y)&0x1)), y) = 0;
 		}
