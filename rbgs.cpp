@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
 				__m128d		east 	= _mm_loadu_pd(&uBlack(index,y));
 				index++;
 				
-				_mm_store_pd(&uRed(x,y), PreF * ( (*FRed) + InvHx2 * ( west + east ) + InvHy2 * ( (*north) + (*south) ) ) );
+				_mm_stream_pd(&uRed(x,y), PreF * ( (*FRed) + InvHx2 * ( west + east ) + InvHy2 * ( (*north) + (*south) ) ) );
 				
 				FRed++;
 				north++;
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 				index++;
 				__m128d		east 	= _mm_loadu_pd(&uRed(index,y));
 				index++;
-				_mm_store_pd(&uBlack(x, y), PreF * ( (*FBlack) + InvHx2 * ( west + east ) + InvHy2 * ( (*north) + (*south) ) ) );
+				_mm_stream_pd(&uBlack(x, y), PreF * ( (*FBlack) + InvHx2 * ( west + east ) + InvHy2 * ( (*north) + (*south) ) ) );
 				
 				FBlack++;
 				north++;
