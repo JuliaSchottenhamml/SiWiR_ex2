@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
 	//calc u
 
 	int	width = ( nx / 2 ) + 1;
-	std::cout << "width," << width << std::endl;
+	//std::cout << "width," << width << std::endl;
 	int even = ((nx + 1)&0x1);
 
 	for (int runs = 0; runs < c; ++runs) {
@@ -163,17 +163,17 @@ int main(int argc, char **argv) {
 
 	double	r = 0;
 	double	r2 = 0;
-
+	
 	for (int y = 1; y < ny; ++y) {
-		for (int x = ( ( y & 0x1 ) ^ 0x1 ) + 1; x < nx; x += 2) {
-			r = ( fRed.get(x, y) + invHx2 * ( uBlack.get(x - 1, y) + uBlack.get(x + 1, y) ) + invHy2 * ( uBlack.get(x, y - 1) + uBlack.get(x, y + 1) ) ) - uRed(x, y) / preF;
+		for (int x = 1; x < width - (even&((y+1)&0x1)); ++x) {
+			r = ( fRed(x, y) + invHx2 * ( uBlack(x - ( y & 0x1 ), y) + uBlack(x + 1 - ( y & 0x1 ), y) ) + invHy2 * ( uBlack(x, y - 1) + uBlack(x, y + 1) ) ) - uRed(x, y) / preF ;
 			r2 += r*r;
 		}
 	}
 
 	for (int y = 1; y < ny; ++y) {
-		for (int x = ( y & 0x1 ) + 1; x < nx; x += 2) {
-			r = ( fBlack.get(x, y) + invHx2 * ( uRed.get(x - 1, y) + uRed.get(x + 1, y) ) + invHy2 * ( uRed.get(x, y - 1) + uRed.get(x, y + 1) ) ) - uBlack.get(x, y) / preF;
+		for (int x = 1; x < width - (even&((y)&0x1)); ++x) {
+			r = ( fBlack(x, y) + invHx2 * ( uRed(x - 1 + ( y & 0x1 ), y) + uRed(x + ( y & 0x1 ), y) ) + invHy2 * ( uRed(x, y - 1) + uRed(x, y + 1) ) ) - uBlack(x, y) / preF;
 			r2 += r*r;
 		}
 	}
@@ -183,10 +183,10 @@ int main(int argc, char **argv) {
 
 	std::cout << "residuum," << r2 << std::endl;
 	
-	r2 = 0;
+	/*r2 = 0;
 	
-	for (int y = 1; y < ny; ++y) {
-		for (int x = 1; x < nx; ++x) {
+	for (int y = 1; y < ny+1; ++y) {
+		for (int x = 1; x < nx+1; ++x) {
 			if (y % 2 == 0) {
 				if (x % 2 == 0) {
 					r = ( fRed.get(x, y) + invHx2 * ( uBlack.get(x - 1, y) + uBlack.get(x + 1, y) ) + invHy2 * ( uBlack.get(x, y - 1) + uBlack.get(x, y + 1) ) ) - uRed(x, y) / preF;
@@ -210,7 +210,7 @@ int main(int argc, char **argv) {
 	r2 = r2 / ( nx - 1 ) / ( ny - 1 );
 	r2 = sqrt(r2);
 
-	std::cout << "residuum," << r2 << std::endl;
+	std::cout << "residuum," << r2 << std::endl; */
 
 	std::ofstream	fOut("data/solution.txt");
 	for (int y = 0; y < ny + 1; ++y) {
